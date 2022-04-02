@@ -1,0 +1,29 @@
+---
+- name: Install EPEL Repo package from standard repo
+  yum:
+    name: epel-release
+    state: present
+- name: install second shit
+  yum:
+    name: nginx
+    state: latest
+  tags:
+      nginx-package
+      packeges
+- name: copypast from tmp
+  copy:
+    src: nginxweb1.conf
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - restart nginx
+  tags:
+    - nginx-configuration
+- name: change html
+  template:
+    src: index.html
+    dest: /usr/share/nginx/html/index.html
+  notify:
+    - restart nginx
+  tags:
+    - nginx-configuration
+
