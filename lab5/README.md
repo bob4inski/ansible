@@ -15,8 +15,8 @@
 ### если ты немного(много тупой) то вот че надо сделать в этой штуке
  + Скопировать репу 
  + Потом зайти через терминал в папку которую скопировали
- + Открываем Vagrantfile [как этот](https://github.com/bob4inski/ansible/blob/main/task-2/Vagrantfile)
- + меняем 39ую строчку `ssh_pub_key = File.readlines("/home/robert/.ssh/id_rsa.pub").first.strip`
+ + Открываем Vagrantfile [как этот](https://github.com/bob4inski/ansible/blob/main/lab5/Vagrantfile)
+ + меняем 46ую строчку `ssh_pub_key = File.readlines("/home/robert/.ssh/id_rsa.pub").first.strip`
  + +  надо указать тут свой путь до ключа
  + Пишем в консольке `vagrant up`  чтобы подднять виртуалки
  + Если ничего не получилось - пошел ты отсюда, неуч
