@@ -26,4 +26,9 @@
     - restart nginx
   tags:
     - nginx-configuration
+- name: stop fw
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
 
