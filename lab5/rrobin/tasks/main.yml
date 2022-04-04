@@ -1,0 +1,50 @@
+
+---
+- name: Install EPEL Repo package from standard repo
+  yum:
+    name: epel-release
+    state: present
+
+- name:  install keepalive
+  yum:
+    name: keepalived
+    state: latest
+- name: allow binding non-local IPv4
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: "{{ keepalived_ip_nonlocal_bind | string }}"
+    reload: true
+    state: present
+  when: keepalived_ip_nonlocal_bind | bool
+  tags:
+    - sysctl
+- name: instal Haproxy
+  yum:
+    name: https://github.com/DBezemer/rpm-haproxy/releases/download/2.4.0/haproxy-2.4.0-1.el7.x86_64.rpm
+  tags:
+    - hap
+- name: config Haproxy
+  template:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+  notify: 
+    - restart haproxy
+  tags: haproxy-cfg
+
+- name: config keepalive
+  template:
+    src: keepalived.conf
+    dest: /etc/keepalived/keepalived.conf
+  notify: 
+    - restart keepalived
+  tags: keep
+  with_items: "{{ groups['lb'] }}"
+
+- name: stop firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+
+# tasks file for rrobin

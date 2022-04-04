@@ -1,0 +1,13 @@
+- name: nginx
+  hosts: webservers
+  become: true
+  strategy: linear
+  roles:
+    - webs
+
+- name: nginx
+  hosts: lb
+  become: true
+  strategy: linear
+  roles:
+    - rrobin

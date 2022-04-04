@@ -1,0 +1,13 @@
+---
+# handlers file for rrobin
+- name: restart haproxy
+  systemd:
+    name: haproxy
+    state: restarted
+    enabled: yes
+- name: restart keepalived
+  systemd:
+    name: keepalived
+    state: restarted
+    enabled: yes
+    
