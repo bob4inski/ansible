@@ -1,6 +1,0 @@
-[webservers]
-web1 ansible_host=192.168.11.111
-web2 ansible_host=192.168.11.112
-
-[lb]
-rrobin ansible_host=192.168.11.113
