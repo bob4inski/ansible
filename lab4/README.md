@@ -21,7 +21,7 @@ This playbook will create a nginx rrobin balancing page for two pages (web1 and 
 
 Before the installation we will need a custom CentOS7 virtual box image with SElinux disabled.
 
-### DON`T FORGET TO EDIT VagrantFile with path to your ssh folder
+### DON`T FORGET TO EDIT [VagrantFile](https://github.com/bob4inski/ansible/blob/main/lab4/Vagrantfile) with path to your ssh folder
 
 ## Installation
 
