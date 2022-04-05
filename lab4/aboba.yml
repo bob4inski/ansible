@@ -1,0 +1,13 @@
+- name: nginx
+  hosts: webservers
+  become: true
+  strategy: linear
+  roles:
+    - nginx_wb
+
+- name: nginx
+  hosts: lb
+  become: true
+  strategy: linear
+  roles:
+    - nginx_serv
