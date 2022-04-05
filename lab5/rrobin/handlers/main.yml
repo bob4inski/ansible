@@ -5,6 +5,7 @@
     name: haproxy
     state: restarted
     enabled: yes
+    
 - name: restart keepalived
   systemd:
     name: keepalived

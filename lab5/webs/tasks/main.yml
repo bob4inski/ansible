@@ -3,7 +3,8 @@
   yum:
     name: epel-release
     state: present
-- name: install second shit
+
+- name: install  nginx
   yum:
     name: nginx
     state: latest
@@ -18,6 +19,7 @@
     - restart nginx
   tags:
     - nginx-configuration
+    
 - name: change html
   template:
     src: index.html.j2
@@ -26,6 +28,7 @@
     - restart nginx
   tags:
     - nginx-configuration
+
 - name: stop fw
   systemd:
     name: firewalld

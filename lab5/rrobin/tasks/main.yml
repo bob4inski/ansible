@@ -20,12 +20,13 @@
     - sysctl
 - name: instal Haproxy
   yum:
-    name: https://github.com/DBezemer/rpm-haproxy/releases/download/2.4.0/haproxy-2.4.0-1.el7.x86_64.rpm
+    name: haproxy
+    state: latest
   tags:
     - hap
 - name: config Haproxy
   template:
-    src: haproxy.cfg
+    src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
   notify: 
     - restart haproxy
