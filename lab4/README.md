@@ -33,7 +33,7 @@ vagrant up
 Then let's start our playbook
 
 ```
-ansible-playbook nginx
+ansible-playbook aboba
 ```
 
 ## Post Installation
