@@ -1,0 +1,7 @@
+---
+# handlers file for nginx_wb
+- name: restart postgresql-14
+  systemd:
+    name: postgresql-14-server
+    state: restarted
+    enabled: yes

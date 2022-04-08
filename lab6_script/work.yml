@@ -1,0 +1,13 @@
+- name: main
+  hosts: master
+  become: true
+  strategy: linear
+  roles:
+    - webs
+
+- name: slave
+  hosts: slave
+  become: true
+  strategy: linear
+  roles:
+    - rrobin

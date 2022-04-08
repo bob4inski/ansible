@@ -1,0 +1,13 @@
+---
+# handlers file for rrobin
+- name: restart postgresql-14
+  systemd:
+    name: postgresql-14-server
+    state: restarted
+    enabled: yes
+    
+- name: start postgresql-14
+  systemd:
+    name: postgresql-14-server
+    state: start
+    enabled: yes

@@ -1,0 +1,45 @@
+---
+
+# - name: "Install Python packages"
+#   yum:
+#     name: python2-psycopg2
+#     state: present 
+
+- name: stop fw
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: aboba
+  yum:
+    name:  
+      - https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      # - postgresql14-server
+    state: present
+  tags:
+    - aboba
+
+- name: aboba local
+  yum:
+    name:  
+      #- https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      - postgresql14-server
+    state: present
+  tags:
+    - aboba
+
+
+
+- name: backup
+  shell: su - postgres -c "PGPASSWORD={{ db_password }} pg_basebackup -h 192.168.21.111 -U  repluser -p 5432 -D $PGDATA -Fp -Xs -P -R"
+  notify: start postgresql-14
+  tags:
+    - back
+
+# - name: promote
+#   become_user: postgres
+#   shell: "/usr/pgsql-14/bin/pg_ctl -D {{ pathtofiles }} promote"
+#   # notify: restart postgres
+
+  

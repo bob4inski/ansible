@@ -1,0 +1,5 @@
+---
+address: '192.168.21.111'
+pathtofiles: /var/lib/pgsql/14/data/
+db_password: '123'
+# vars file for rrobin

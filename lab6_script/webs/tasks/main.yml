@@ -1,0 +1,111 @@
+---
+
+- name: "Install Python packages"
+  yum:
+    name:
+
+      - python-psycopg2
+      - python3-pip
+    state: latest 
+
+
+- name: stop fw
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: aboba
+  yum:
+    name:  
+      - https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      # - postgresql14-server
+    state: present
+  tags:
+    - aboba
+
+- name: aboba local
+  yum:
+    name:  
+      #- https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      - postgresql14-server
+    state: present
+  tags:
+    - aboba
+
+
+- name: Check that the somefile.conf exists
+  stat:
+    path: "{{ pathtofiles }}postgresql.conf"
+  register: stat_result
+  tags:
+    - initdb
+        
+- name: "Initialize PostgreSQL"
+  become_user: postgres
+  shell: "/usr/pgsql-14/bin/initdb -D {{ pathtofiles }} "
+  #shell: postgresql-14-server initdb
+  tags:
+    - initdb
+  when: not stat_result.stat.exists
+
+- name: replace config
+  copy:
+    src: postgresql.conf
+    dest: "{{ pathtofiles }}postgresql.conf"
+  notify:
+    - restart postgresql-14
+  tags:
+    - postgres
+
+
+- name: replace conf to hba
+  postgresql_pg_hba:
+    dest: "{{ pathtofiles }}pg_hba.conf"
+    contype: host
+    users: "{{ db_user }}"
+    source: "{{ source_pgs }}"
+    databases: replication
+    method: md5
+
+- name: create a folder
+  file:
+    path: /aboba
+    state: directory
+    owner: postgres
+
+- name: "Find out if PostgreSQL is initialized"
+  stat:
+    path: "/var/lib/pgsql/14/data/pg_hba.conf"
+  register: postgres_data
+
+- name: "Start and enable services"
+  service: "name={{ item }} state=started enabled=yes"
+  with_items:
+    - postgresql-14
+
+- name: "Create app database"
+  postgresql_db:
+    state: present
+    name: "{{ db_name }}"
+  become: yes
+  become_user: postgres  
+  tags: dat
+
+
+- name: "Create db user"
+  postgresql_user:
+    state: present
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    role_attr_flags: replication
+  become: yes
+  become_user: postgres
+  tags: usr
+
+
+
+
+    
+
+
