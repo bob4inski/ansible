@@ -31,11 +31,16 @@
 
 
 
-- name: backup
-  shell: su - postgres -c "PGPASSWORD={{ db_password }} pg_basebackup -h 192.168.21.111 -U  repluser -p 5432 -D $PGDATA -Fp -Xs -P -R"
-  notify: start postgresql-14
-  tags:
-    - back
+# - name: backup
+#   shell: su - postgres -c "PGPASSWORD={{ db_password }} pg_basebackup -h 192.168.21.111 -U  repluser -p 5432 -D $PGDATA -Fp -Xs -P -R"
+#   notify: start postgresql-14
+#   tags:
+#     - back
+
+- name: "Start and enable services"
+  service: "name={{ item }} state=restarted enabled=yes"
+  with_items:
+    - postgresql-14
 
 # - name: promote
 #   become_user: postgres

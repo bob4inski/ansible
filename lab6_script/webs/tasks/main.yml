@@ -1,12 +1,12 @@
 ---
 
-- name: "Install Python packages"
-  yum:
-    name:
+# - name: "Install Python packages"
+#   yum:
+#     name:
 
-      - python-psycopg2
-      - python3-pip
-    state: latest 
+#       - python-psycopg2
+#       - python3-pip
+#     state: latest 
 
 
 - name: stop fw

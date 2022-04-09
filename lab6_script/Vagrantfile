@@ -3,11 +3,11 @@
 
 MACHINES = {
   :postgres1 => {
-        :box_name => "sentos7-by-bob",
+        :box_name => "norma",
         :ip_addr => '192.168.21.111'
   },
   :postgres2 => {
-        :box_name => "sentos7-by-bob",
+        :box_name => "norma",
         :ip_addr => '192.168.21.112'
   }
 }
