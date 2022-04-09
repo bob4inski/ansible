@@ -10,6 +10,8 @@
     name: firewalld
     state: stopped
     enabled: no
+  tags:
+    - aboba
 
 - name: aboba
   yum:
@@ -31,16 +33,27 @@
 
 
 
-# - name: backup
-#   shell: su - postgres -c "PGPASSWORD={{ db_password }} pg_basebackup -h 192.168.21.111 -U  repluser -p 5432 -D $PGDATA -Fp -Xs -P -R"
-#   notify: start postgresql-14
-#   tags:
-#     - back
+- name: backu
 
-- name: "Start and enable services"
-  service: "name={{ item }} state=restarted enabled=yes"
-  with_items:
-    - postgresql-14
+  shell: "sudo su  - postgres -c 'PGPASSWORD=123 pg_basebackup -h 192.168.21.111 -U  repluser -p 5432 -D $PGDATA -Fp -Xs -P -R'"
+  # shell: "PGPASSWORD='{{ db_password }}' pg_basebackup -h 192.168.21.111 -U  repluser -p 5432 -D $PGDATA -Fp -Xs -P -R"
+  tags:
+    - back
+
+
+- name: restart postgresql-14
+  systemd:
+    name: postgresql-14
+    state: restarted
+    enabled: yes
+  tags:
+    - back
+
+
+# - name: "Start and enable services"
+#   service: "name={{ item }} state=restarted enabled=yes"
+#   with_items:
+#     - postgresql-14
 
 # - name: promote
 #   become_user: postgres
