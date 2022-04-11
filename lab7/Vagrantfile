@@ -46,6 +46,9 @@ Vagrant.configure("2") do |config|
           box.vm.disk :disk, size: "10GB", name: "pg2_pg_wal"
           end
           config.vm.provision "shell" do |s|
+		  config.ssh.username = 'root'
+		config.ssh.password = 'abo'
+		config.ssh.insert_key = 'true'
           ssh_pub_key = File.readlines("/home/bob4inski/.ssh/id_rsa.pub").first.strip
           s.inline = <<-SHELL
             mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
