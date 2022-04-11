@@ -1,23 +1,21 @@
 ---
 # tasks file for base
-- name: install rpm
+- name: install postgres rpm package
   yum:
     name:  
       - https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
       - epel-release
-      # - postgresql14-server
     state: present
   tags:
-    - aboba
+    - install
 
-- name: instal aboba
+- name: instal postgresql-14
   yum:
     name:  
-      #- https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
       - postgresql14-server
     state: present
   tags:
-    - aboba
+    - install
 
 - name: Install lvm2 dependency
   package:
@@ -28,22 +26,22 @@
 
 
 # ..................................................................................................................
-- name: Create a volume group on top of /dev/sda1 with physical extent size = 32MB
+- name: Create a volume group on top of /dev/sdb
   community.general.lvg:
     vg: pgdata
     pvs: /dev/sdb
   tags:
-    - skip
-    - lg
+    - skip-create-disk
+    - vg
     
 
-- name: Create a volume group on top of /dev/sda1 with physical extent size = 32MB
+- name: Create a volume group on top of /dev/sdc
   community.general.lvg:
     vg: pgwal
     pvs: /dev/sdc
   tags:
-    - skip
-    - lg
+    - skip-create-disk
+    - vg
 
 - name: Create a logical volume sdb
   community.general.lvol:
@@ -53,7 +51,7 @@
     pvs: /dev/sdb
     size: 100%FREE
   tags:
-    - skip
+    - skip-create-disk
     - lv
 
 - name: Create a logical volume sdc
@@ -64,7 +62,7 @@
     pvs: /dev/sdc
     size: 100%FREE
   tags:
-    - skip
+    - skip-create-disk
     - lv
 # .................................................................................................................
 - name: mkfs pgdata
@@ -73,7 +71,7 @@
     dev: /dev/mapper/pgdata-pgdata
   tags: 
     - skip-create-disk
-    - skip
+    - formatting
 
 
 - name: mkfs pgwal
@@ -82,7 +80,7 @@
     dev: /dev/mapper/pgwal-pgwal
   tags: 
     - skip-create-disk
-    - skip
+    - formatting
 # .................................................................................................................
 - name: mount the /dev/sdb
   mount:
@@ -92,7 +90,7 @@
     state: mounted
   tags: 
     - skip-create-disk
-    - skip
+    - mountdisks
 
 - name: mount the /dev/sdc
   mount:
@@ -102,9 +100,9 @@
     state: mounted
   tags: 
     - skip-create-disk
-    - skip
+    - mountdisks
 # .................................................................................................................
-- name: Create directory data1 if does not exist
+- name: Create directory pg_data if does not exist
   file:
     path: "{{ pathtofiles }}"
     state: directory
@@ -112,9 +110,9 @@
     group: postgres
     mode: '0700'
   tags:
-    - directory
+    - pg_data
     
-- name: Create directory data if does not exist
+- name: Create directory pg_wal if does not exist
   file:
     path: "{{ pathtoback }}"
     state: directory
@@ -122,7 +120,7 @@
     group: postgres
     mode: '0700'
   tags:
-    - directory
+    - pg_wal
 
 - name: Change file ownership, group and permissions
   ansible.builtin.file:
@@ -137,6 +135,7 @@
 - name: install from local vip and patroni
   shell: "yum -y localinstall /vagrant/*rpm"
   tags: local
+
 # .................................................................................................................
 - name: Create directory data1 if does not exist
   file:
@@ -174,14 +173,14 @@
     state: started
     enabled: yes
   tags: 
-    - directory
+    - patron
 # .................................................................................................................
 - name: patrony aboba
   template:
     src: postgresql.yml
     dest: /opt/app/patroni/etc/postgresql.yml
   tags:
-    - patrik
+    - patron_conf
 
 - name: i cant find this shit
   template:
