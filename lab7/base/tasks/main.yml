@@ -1,0 +1,193 @@
+---
+# tasks file for base
+- name: install rpm
+  yum:
+    name:  
+      - https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      - epel-release
+      # - postgresql14-server
+    state: present
+  tags:
+    - aboba
+
+- name: instal aboba
+  yum:
+    name:  
+      #- https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      - postgresql14-server
+    state: present
+  tags:
+    - aboba
+
+- name: Install lvm2 dependency
+  package:
+    name: lvm2
+    state: present
+
+
+
+
+# ..................................................................................................................
+- name: Create a volume group on top of /dev/sda1 with physical extent size = 32MB
+  community.general.lvg:
+    vg: pgdata
+    pvs: /dev/sdb
+  tags:
+    - skip
+    - lg
+    
+
+- name: Create a volume group on top of /dev/sda1 with physical extent size = 32MB
+  community.general.lvg:
+    vg: pgwal
+    pvs: /dev/sdc
+  tags:
+    - skip
+    - lg
+
+- name: Create a logical volume sdb
+  community.general.lvol:
+    vg: pgdata
+    lv: pgdata
+    # size: 512
+    pvs: /dev/sdb
+    size: 100%FREE
+  tags:
+    - skip
+    - lv
+
+- name: Create a logical volume sdc
+  community.general.lvol:
+    vg: pgwal
+    lv: pgwal
+    # size: 512
+    pvs: /dev/sdc
+    size: 100%FREE
+  tags:
+    - skip
+    - lv
+# .................................................................................................................
+- name: mkfs pgdata
+  community.general.filesystem:
+    fstype: xfs
+    dev: /dev/mapper/pgdata-pgdata
+  tags: 
+    - skip-create-disk
+    - skip
+
+
+- name: mkfs pgwal
+  community.general.filesystem:
+    fstype: xfs
+    dev: /dev/mapper/pgwal-pgwal
+  tags: 
+    - skip-create-disk
+    - skip
+# .................................................................................................................
+- name: mount the /dev/sdb
+  mount:
+    path: "{{ pathtofiles }}"
+    src: /dev/mapper/pgdata-pgdata
+    fstype: xfs
+    state: mounted
+  tags: 
+    - skip-create-disk
+    - skip
+
+- name: mount the /dev/sdc
+  mount:
+    path: "{{ pathtoback }}"
+    src: /dev/mapper/pgwal-pgwal
+    fstype: xfs
+    state: mounted
+  tags: 
+    - skip-create-disk
+    - skip
+# .................................................................................................................
+- name: Create directory data1 if does not exist
+  file:
+    path: "{{ pathtofiles }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0700'
+  tags:
+    - directory
+    
+- name: Create directory data if does not exist
+  file:
+    path: "{{ pathtoback }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0700'
+  tags:
+    - directory
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: "{{ pathtoobsh }}"
+    owner: postgres
+    group: postgres
+    mode: '0755'
+  tags:
+    - directory
+# .................................................................................................................
+
+- name: install from local vip and patroni
+  shell: "yum -y localinstall /vagrant/*rpm"
+  tags: local
+# .................................................................................................................
+- name: Create directory data1 if does not exist
+  file:
+    path: /var/log/patroni
+    state: directory
+    owner: postgres
+    group: postgres
+  tags:
+    - directory
+
+- name: Create directory data1 if does not exist
+  file:
+    path: /var/log/postgres
+    state: directory
+    owner: postgres
+    group: postgres
+  tags:
+    - directory
+
+- name: environment
+  template:
+    src: env
+    dest: /etc/environment
+  # when: pg1
+
+- name: Start patroni-watchdog
+  ansible.builtin.systemd:
+    name: patroni-watchdog.service
+    state: started
+    enabled: yes
+  
+- name: Start patroni
+  ansible.builtin.systemd:
+    name: patroni
+    state: started
+    enabled: yes
+  tags: 
+    - directory
+# .................................................................................................................
+- name: patrony aboba
+  template:
+    src: postgresql.yml
+    dest: /opt/app/patroni/etc/postgresql.yml
+  tags:
+    - patrik
+
+- name: i cant find this shit
+  template:
+    src: vip.yml
+    dest: /etc/default/vip-manager.yml
+  notify: restart vip
+  tags:
+    - config_vip
+
