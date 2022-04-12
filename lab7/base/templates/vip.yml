@@ -19,7 +19,7 @@ dcs-endpoints:
   - http://127.0.0.1:8500
 
 # don't worry about parameter with a prefix that doesn't match the endpoint_type. You can write anything there, I won't even look at it.
-consul-token: "NwD2DbIR0QybZMrY1NcyJkA0unym092RwEqneVuyyRg="
+consul-token: "{{ consul_raw_key }}"
 
 # how often things should be retried and how long to wait between retries. (currently only affects arpClient)
 retry-num: 2
