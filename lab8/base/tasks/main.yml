@@ -176,11 +176,15 @@
     dest: /etc/environment
   # when: pg1
 
+
+
 - name: Start patroni-watchdog
   ansible.builtin.systemd:
     name: patroni-watchdog.service
     state: started
     enabled: yes
+- name: Sleep 10
+  shell: sleep 10
   
 - name: restart patroni
   ansible.builtin.systemd:
@@ -194,7 +198,7 @@
   template:
     src: postgresql.yml
     dest: /opt/app/patroni/etc/postgresql.yml
-  notify: restart patron
+  notify: restart patroni
   tags:
     - patron_conf
 

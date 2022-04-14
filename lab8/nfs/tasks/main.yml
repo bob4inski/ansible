@@ -128,6 +128,8 @@
   when: "not 'nfs' in inventory_hostname"
 
 - name: init backup
+  become: yes
+  become_user: postgres
   shell: "pg_probackup-14 init -B /pgsql/pg_backup"
   tags:
     - init
@@ -138,7 +140,6 @@
     path: /pgsql
     owner: postgres
     group: postgres
-    mode: '0755'
     recurse: yes
   tags:
     - directory  
@@ -148,6 +149,7 @@
   shell: "pg_probackup-14 add-instance -B /pgsql/pg_backup -D /pgsql/pg_data/14  --instance sirius"
   tags:
     - instance
+    - create_abob
   when: "'pg2' in inventory_hostname"
 
 
@@ -156,7 +158,7 @@
     src: aboba.sql
     dest: /aboba.sql
   tags:
-    - create_aboba
+    - create_abob
   when: "'pg1' in inventory_hostname"
 
 
@@ -167,6 +169,15 @@
   tags:
     - create_abob
   when: "'pg1' in inventory_hostname"
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /pgsql
+    owner: postgres
+    group: postgres
+    recurse: yes
+  tags:
+    - directory  
 
 
   
