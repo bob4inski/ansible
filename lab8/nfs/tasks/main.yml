@@ -24,6 +24,7 @@
     - lv
   when: "'nfs' in inventory_hostname"
 
+
 - name: mkfs pgdata 
   community.general.filesystem:
     fstype: xfs

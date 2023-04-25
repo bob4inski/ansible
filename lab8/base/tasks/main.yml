@@ -9,6 +9,7 @@
   tags:
     - install
 
+
 - name: instal postgresql-14
   yum:
     name:  

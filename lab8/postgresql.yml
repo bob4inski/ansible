@@ -88,3 +88,4 @@ watchdog:
   device: /dev/watchdog
   mode: required
   safety_margin: 5
+
