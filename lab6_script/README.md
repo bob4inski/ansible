@@ -1,7 +1,6 @@
 # ansible
-## five project 
->the essence of the laboratory
->>task:
+## Шестая лабораторная работа
+## Задание
  + on servers rrobin, web1, web2 to install nginx.
  + on servers web1, web2 Nginx he works on port 8080 and gives a custom page.
  + on server rrobin Nginx provides load balancing of servers web1 и web2 in the mode round-robin.
@@ -22,5 +21,3 @@
  + ****we've been waiting a long time****
 
  + if you are not sure about the correctness of your work, then repeat after [Robert](https://www.youtube.com/watch?v=ZzvM6_S0HXA)
-
-\
